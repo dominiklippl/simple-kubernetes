@@ -1,0 +1,53 @@
+apiVersion: certmanager.k8s.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging
+spec:
+  acme:
+    email: letsencrypt@onegaming.group
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod
+
+    # The HTTP01 and DNS01 fields are now **deprecated**.
+    # We leave them in place here so that any Certificates that still
+    # specify a `certificate.spec.acme` stanza will continue to operate
+    # correctly.
+    # cert-manager will decide which configuration to use based on whether
+    # the Certificate contains a `certificate.spec.acme` stanza.
+    http01: {}
+    dns01:
+      providers:
+        - name: cloudflare
+          cloudflare:
+            email: my-cloudflare-acc@example.com
+            apiKeySecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token
+
+    # Configure the challenge solvers.
+    solvers:
+      # An empty selector will 'match' all Certificate resources that
+      # reference this Issuer.
+      - selector: {}
+        http01:
+          ingress:
+            class: nginx
+      - selector:
+          # Any Certificate resources, or Ingress resources that use
+          # ingress-shim and match the below label selector will use this
+          # configured solver type instead of the default nginx based HTTP01
+          # solver above.
+          # You can continue to add new solver types if needed.
+          # The most specific 'match' will be used.
+          matchLabels:
+            use-cloudflare-solver: "true"
+        dns01:
+          # Adjust the configuration below according to your environment.
+          # You can view more example configurations for different DNS01
+          # providers in the documentation: https://docs.cert-manager.io/en/latest/tasks/issuers/setup-acme/dns01/index.html
+          cloudflare:
+            email: my-cloudflare-acc@example.com
+            apiKeySecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token
