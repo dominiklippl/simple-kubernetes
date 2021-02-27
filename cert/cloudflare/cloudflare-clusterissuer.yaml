@@ -1,10 +1,10 @@
-apiVersion: certmanager.k8s.io/v1alpha2
+apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    email: letsencrypt@onegaming.group
+    email: <e-mail>
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-prod
@@ -15,7 +15,7 @@ spec:
     # correctly.
     # cert-manager will decide which configuration to use based on whether
     # the Certificate contains a `certificate.spec.acme` stanza.
-    http01: {}
+    http01: { }
     dns01:
       providers:
         - name: cloudflare
@@ -29,7 +29,7 @@ spec:
     solvers:
       # An empty selector will 'match' all Certificate resources that
       # reference this Issuer.
-      - selector: {}
+      - selector: { }
         http01:
           ingress:
             class: nginx
