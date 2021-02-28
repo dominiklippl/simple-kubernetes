@@ -1,35 +1,18 @@
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt-staging
+  name: cloudflare-staging
 spec:
   acme:
     email: <e-mail>
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-prod
-
-    # The HTTP01 and DNS01 fields are now **deprecated**.
-    # We leave them in place here so that any Certificates that still
-    # specify a `certificate.spec.acme` stanza will continue to operate
-    # correctly.
-    # cert-manager will decide which configuration to use based on whether
-    # the Certificate contains a `certificate.spec.acme` stanza.
-    http01: { }
-    dns01:
-      providers:
-        - name: cloudflare
-          cloudflare:
-            email: my-cloudflare-acc@example.com
-            apiKeySecretRef:
-              name: cloudflare-api-token-secret
-              key: api-token
-
     # Configure the challenge solvers.
     solvers:
       # An empty selector will 'match' all Certificate resources that
       # reference this Issuer.
-      - selector: { }
+      - selector: {}
         http01:
           ingress:
             class: nginx
@@ -47,7 +30,7 @@ spec:
           # You can view more example configurations for different DNS01
           # providers in the documentation: https://docs.cert-manager.io/en/latest/tasks/issuers/setup-acme/dns01/index.html
           cloudflare:
-            email: my-cloudflare-acc@example.com
+            email: <e-mail>
             apiKeySecretRef:
               name: cloudflare-api-token-secret
               key: api-token

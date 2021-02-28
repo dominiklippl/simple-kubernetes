@@ -13,6 +13,7 @@ spec:
       name: letsencrypt-staging
     # Enable the HTTP-01 challenge provider
     solvers:
-      - http01:
+      - selector: { }
+        http01:
           ingress:
-            class:  nginx
+            class: nginx

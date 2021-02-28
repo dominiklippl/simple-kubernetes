@@ -1,8 +1,8 @@
 name: Publish Docker image
 on:
-  push:
-    branches:
-      - 'master'
+  workflow_dispatch:
+  release:
+    types: [ published ]
 jobs:
   push_to_registry:
     name: Push Docker image to GitHub Packages
@@ -17,5 +17,5 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
-          repository: venus-werbeagentur-gmbh/kubernetes-config/hello-world
+          repository: venus-werbeagentur-gmbh/simple-kubernetes/hello-world
           tag_with_ref: true

@@ -25,9 +25,9 @@ spec:
         # https://github.com/settings/applications/new
         env:
         - name: OAUTH2_PROXY_CLIENT_ID
-          value: <Client ID>
+          value: <client-id>
         - name: OAUTH2_PROXY_CLIENT_SECRET
-          value: 2764ecebe7158299d662d6e95d641beee2b447c0
+          value: <client-secret>
         # docker run -ti --rm python:3-alpine python -c 'import secrets,base64; print(base64.b64encode(base64.b64encode(secrets.token_bytes(16))));'
         - name: OAUTH2_PROXY_COOKIE_SECRET
           value: <Client Secret>

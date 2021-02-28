@@ -6,15 +6,21 @@ metadata:
     use-cloudflare-solver: "true"
   annotations:
     kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "cloudflare-prod" # The name of the cloudflare ClusterIssuer
+    nginx.ingress.kubernetes.io/ssl-redirect: "true" # If you want that the ingress should redirect you to https://
 spec:
+  tls:
+    - hosts:
+        - <host>
+      secretName: <tlsname>
   rules:
-  - host: <host>
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: docker-hello-world-svc
-            port:
-              number: 8088
+    - host: <host>
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: docker-hello-world-svc
+                port:
+                  number: 8088

@@ -1,0 +1,36 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: ClusterIssuer
+metadata:
+  name: cloudflare-staging
+spec:
+  acme:
+    email: <e-mail>
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    # Configure the challenge solvers.
+    solvers:
+      # An empty selector will 'match' all Certificate resources that
+      # reference this Issuer.
+      - selector: {}
+        http01:
+          ingress:
+            class: nginx
+      - selector:
+          # Any Certificate resources, or Ingress resources that use
+          # ingress-shim and match the below label selector will use this
+          # configured solver type instead of the default nginx based HTTP01
+          # solver above.
+          # You can continue to add new solver types if needed.
+          # The most specific 'match' will be used.
+          matchLabels:
+            use-cloudflare-solver: "true"
+        dns01:
+          # Adjust the configuration below according to your environment.
+          # You can view more example configurations for different DNS01
+          # providers in the documentation: https://docs.cert-manager.io/en/latest/tasks/issuers/setup-acme/dns01/index.html
+          cloudflare:
+            email: <e-mail>
+            apiKeySecretRef:
+              name: cloudflare-api-token-secret
+              key: api-token
