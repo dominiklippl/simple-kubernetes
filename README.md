@@ -1,10 +1,8 @@
 ## What is Simple Kubernetes?
-_________________
 
 ***Simple Kubernetes*** contains several guides, useful links, troubleshooting, scripts and deployments to make it as easy as possible to create your own bare metal [Kubernetes Cluster](https://github.com/kubernetes/kubernetes) inside [Proxmox](https://www.proxmox.com/de/) in [LXC Containers](https://en.wikipedia.org/wiki/LXC).
 
 ## Table of contents
-_________________
 * [Wiki](../../wiki)
 * **Scripts**
     * Installer
