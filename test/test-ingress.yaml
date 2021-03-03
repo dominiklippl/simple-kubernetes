@@ -11,6 +11,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: docker-hello-world-svc
+            name: hello-world
             port:
               number: 8088
