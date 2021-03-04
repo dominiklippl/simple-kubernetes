@@ -1,32 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-world
-  labels:
-    app: hello-world
+  name: echo-deployment
 spec:
+  replicas: 1
   selector:
     matchLabels:
-      app: hello-world
+      app: echo-server
   template:
     metadata:
       labels:
-        app: hello-world
+        app: echo-server
     spec:
       containers:
-      - name: docker-hello-world
-        image: k8s.gcr.io/echoserver:1.4
-        ports:
-        - containerPort: 80
+        - name: echo-server
+          image: k8s.gcr.io/echoserver:1.4
+          ports:
+            - name: http-port
+              containerPort: 8080
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: hello-world
+  name: echo-service
 spec:
-  selector:
-    app: hello-world
   ports:
-    - port: 8088
-      targetPort: 80
-  type: ClusterIP
+    - name: http-port
+      port: 80
+      targetPort: http-port
+      protocol: TCP
+  selector:
+    app: echo-server

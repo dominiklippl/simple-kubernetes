@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nginx-test
+  name: test-echo-ingress
   labels:
     use-http01-solver: "true"
   annotations:
@@ -22,6 +22,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: docker-hello-world-svc
+                name: echo-service
                 port:
-                  number: 8088
+                  number: 80

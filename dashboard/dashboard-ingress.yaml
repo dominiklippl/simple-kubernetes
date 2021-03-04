@@ -11,6 +11,10 @@ metadata:
     cme.cert-manager.io/http01-edit-in-place: "true" # This annotation prevents the creation of a separate ingress for the ACME challenge. Instead, the current Ingress is extended by the ACME Challenge path.
     nginx.ingress.kubernetes.io/ssl-redirect: "true" # If you want that the ingress should redirect you to https://
 spec:
+  tls:
+  - hosts:
+    - <host>
+    secretName: <tlsname>
   rules:
     - host: <host>
       http:
