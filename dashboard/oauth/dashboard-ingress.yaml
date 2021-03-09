@@ -1,15 +1,25 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
+  name: external-auth-oauth2
+  namespace: kubernetes-dashboard
+  labels:
+    use-http01-solver: "true"
   annotations:
     kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/configuration-snippet: |-
+      proxy_ssl_server_name on;
+      proxy_ssl_name $host;
+
+    # Issuer
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod" # The name of the LetsEncrypt ClusterIssuer
     cme.cert-manager.io/http01-edit-in-place: "true" # This annotation prevents the creation of a separate ingress for the ACME challenge. Instead, the current Ingress is extended by the ACME Challenge path.
+
+    # OAuth Proxy
     nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
-  name: external-auth-oauth2
-  namespace: kube-system
 spec:
   rules:
   - host: <host>
@@ -17,12 +27,12 @@ spec:
       paths:
       - backend:
           serviceName: kubernetes-dashboard
-          servicePort: 80
+          servicePort: 443
         path: /
   tls:
-    - hosts:
-        - <host>
-      secretName: kubernetes-dash-oauth-tls
+  - hosts:
+    - <host>
+    secretName: <secret-name>
 
 ---
 
@@ -30,23 +40,28 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: oauth2-proxy
-  namespace: kube-system
+  namespace: kubernetes-dashboard
   annotations:
     kubernetes.io/ingress.class: "nginx"
+
+    # Issuer
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: "letsencrypt-prod" # The name of the LetsEncrypt ClusterIssuer
     cme.cert-manager.io/http01-edit-in-place: "true" # This annotation prevents the creation of a separate ingress for the ACME challenge. Instead, the current Ingress is extended by the ACME Challenge path.
     nginx.ingress.kubernetes.io/ssl-redirect: "true" # If you want that the ingress should redirect you to https://
 spec:
-  rules:
-  - host: <host>
-    http:
-      paths:
-      - backend:
-          serviceName: oauth2-proxy
-          servicePort: 4180
-        path: /oauth2
   tls:
   - hosts:
     - <host>
-    secretName: kubernetes-dash-oauth-proxy-tls
+    secretName: <secret-name>
+  rules:
+    - host: kubernetes.we2p.com
+      http:
+        paths:
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: oauth2-proxy
+                port:
+                  number: 4180

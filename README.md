@@ -19,14 +19,14 @@
     * [Ingress](ingress)
     * [CertManager](https://github.com/jetstack/cert-manager)
         * LetsEncrypt ***(HTTP01 Challenge)***
-            * [Prod](cert/letsencrypt-prod-clusterissuer.yaml) (ClusterIssuer)
-            * [Staging](cert/letsencrypt-staging-clusterissuer.yaml) (ClusterIssuer)
+            * [Prod](cert/letsencrypt/prod-clusterissuer.yaml) (ClusterIssuer)
+            * [Staging](cert/letsencrypt/staging-clusterissuer.yaml) (ClusterIssuer)
         * Cloudflare ***(DNS01 Challenge)***
-            * [Prod](cert/cloudflare/cloudflare-prod-clusterissuer.yaml) (ClusterIssuer)
-            * [Staging](cert/cloudflare/cloudflare-staging-clusterissuer.yaml) (ClusterIssuer)
+            * [Prod](cert/cloudflare/prod-clusterissuer.yaml) (ClusterIssuer)
+            * [Staging](cert/cloudflare/staging-clusterissuer.yaml) (ClusterIssuer)
 
     * Testing
-        * [Deployment](test/test-deployment.yaml)
-        * [Ingress](test/test-ingress.yaml)
-        * [LetsEncrypt-Ingress](test/test-letsencrypt-ingress.yaml)
-        * [Cloudflare-Ingress](test/test-cloudflare-ingress.yaml)
+        * [Deployment](test/deployment.yaml)
+        * [Ingress](test/ingress.yaml)
+        * [LetsEncrypt-Ingress](test/letsencrypt-ingress.yaml)
+        * [Cloudflare-Ingress](test/cloudflare-ingress.yaml)
