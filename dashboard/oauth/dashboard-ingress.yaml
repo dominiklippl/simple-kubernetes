@@ -1,10 +1,11 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: external-auth-oauth2
   namespace: kubernetes-dashboard
   labels:
     use-http01-solver: "true"
+    #use-cloudflare-solver: "true"
   annotations:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
@@ -13,49 +14,62 @@ metadata:
       proxy_ssl_name $host;
 
     # Issuer
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod" # The name of the LetsEncrypt ClusterIssuer
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # The name of the LetsEncrypt HTTP01 ClusterIssuer
+    #cert-manager.io/cluster-issuer: "cloudflare-prod" # The name of the Cloudflare DNS01 ClusterIssuer
     cme.cert-manager.io/http01-edit-in-place: "true" # This annotation prevents the creation of a separate ingress for the ACME challenge. Instead, the current Ingress is extended by the ACME Challenge path.
+
+    # SSL
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 
     # OAuth Proxy
     nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
     nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$escaped_request_uri"
 spec:
   rules:
-  - host: <host>
-    http:
-      paths:
-      - backend:
-          serviceName: kubernetes-dashboard
-          servicePort: 443
-        path: /
+    - host: <host>
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kubernetes-dashboard
+                port:
+                  number: 443
   tls:
-  - hosts:
-    - <host>
-    secretName: <secret-name>
+    - hosts:
+        - <host>
+      secretName: <tlsname>
 
 ---
 
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: oauth2-proxy
   namespace: kubernetes-dashboard
+  labels:
+    use-http01-solver: "true"
+    #use-cloudflare-solver: "true"
   annotations:
     kubernetes.io/ingress.class: "nginx"
 
     # Issuer
-    kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod" # The name of the LetsEncrypt ClusterIssuer
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # The name of the LetsEncrypt HTTP01 ClusterIssuer
+    #cert-manager.io/cluster-issuer: "cloudflare-prod" # The name of the Cloudflare DNS01 ClusterIssuer
     cme.cert-manager.io/http01-edit-in-place: "true" # This annotation prevents the creation of a separate ingress for the ACME challenge. Instead, the current Ingress is extended by the ACME Challenge path.
-    nginx.ingress.kubernetes.io/ssl-redirect: "true" # If you want that the ingress should redirect you to https://
+
+    # SSL
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   tls:
-  - hosts:
-    - <host>
-    secretName: <secret-name>
+    - hosts:
+        - <host>
+      secretName: <tlsname>
   rules:
-    - host: kubernetes.we2p.com
+    - host: <host>
       http:
         paths:
           - path: /oauth2
